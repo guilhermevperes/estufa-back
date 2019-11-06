@@ -7,13 +7,15 @@ module.exports = {
   },
 
   async store (req, res) {
-    const { name, temperature, lightness, moisture } = req.body
+    const { name, controlType, temperature, moisture, timeLightStart, timeLightEnd } = req.body
 
     const plant = await Plants.create({
       name,
+      controlType,
       temperature,
-      lightness,
-      moisture
+      moisture,
+      timeLightStart,
+      timeLightEnd
     })
 
     return res.json(plant)
@@ -21,13 +23,15 @@ module.exports = {
 
   async update (req, res) {
     const id = req.params.id
-    const { name, temperature, lightness, moisture } = req.body
+    const { name, controlType, temperature, moisture, timeLightStart, timeLightEnd } = req.body
 
     const updatedPlant = await Plants.updateOne({ _id: id }, {
       name: name,
+      controlType: controlType,
       temperature: temperature,
-      lightness: lightness,
-      moisture: moisture
+      moisture: moisture,
+      timeLightStart: timeLightStart,
+      timeLightEnd: timeLightEnd
     })
 
     return res.json(updatedPlant)
@@ -36,8 +40,10 @@ module.exports = {
   async delete (req, res) {
     const id = req.params.id
 
-    const plantDeleted = await Plants.deleteOne({ _id: id })
+    const plant = await Plants.findById({ _id: id })
 
-    return res.json(plantDeleted)
+    await Plants.deleteOne({ _id: id })
+
+    return res.json(plant)
   }
 }

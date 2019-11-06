@@ -13,7 +13,7 @@ const RegisterSchema = mongoose.Schema({
     type: Number,
     required: true
   },
-  lightness: {
+  mv: {
     type: Number,
     required: true
   },

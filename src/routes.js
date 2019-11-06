@@ -13,7 +13,7 @@ routes.post('/plants', PlantController.store)
 routes.put('/plants/:id', PlantController.update)
 routes.delete('/plants/:id', PlantController.delete)
 
-routes.get('/registers', RegisterController.index)
+routes.get('/registers/:id', RegisterController.index)
 routes.post('/registers', RegisterController.store)
 routes.delete('/registers/:id', RegisterController.delte)
 
@@ -23,6 +23,7 @@ routes.put('/users/:id', UserController.update)
 routes.delete('/users/:id', UserController.delete)
 routes.post('/users/login', LoginController.store)
 
-routes.post('/arduino/:id', ArduinoController.index)
+routes.post('/arduino', ArduinoController.setControleData)
+routes.post('/arduino/:c/light', ArduinoController.lighControl)
 
 module.exports = routes

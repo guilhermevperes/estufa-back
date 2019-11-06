@@ -5,16 +5,24 @@ const PlantsSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  temperature: {
-    type: Number,
+  controlType: {
+    type: String,
     required: true
   },
-  lightness: {
+  temperature: {
     type: Number,
     required: true
   },
   moisture: {
     type: Number,
+    required: true
+  },
+  timeLightStart: {
+    type: String,
+    required: true
+  },
+  timeLightEnd: {
+    type: String,
     required: true
   }
 }, {

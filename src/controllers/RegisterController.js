@@ -3,13 +3,15 @@ const Plants = require('../models/Plants')
 
 module.exports = {
   async index (req, res) {
-    const registers = await Registers.find().sort('createdAt')
+    const plantId = req.params.id
+    console.log('plantId', plantId)
+    const registers = await Registers.find({ plantId: plantId }).sort('createdAt')
 
     return res.json(registers)
   },
 
   async store (req, res) {
-    const { plantId, controlType, temperature, lightness, moisture } = req.body
+    const { plantId, controlType, temperature, mv, moisture } = req.body
 
     if (plantId.length !== 24) {
       return res.json({ message: 'This plant does not exists' })
@@ -25,7 +27,7 @@ module.exports = {
       plantId,
       controlType,
       temperature,
-      lightness,
+      mv,
       moisture
     })
 
