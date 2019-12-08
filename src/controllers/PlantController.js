@@ -21,6 +21,16 @@ module.exports = {
     return res.json(plant)
   },
 
+  async getOne (req, res) {
+    const { id } = req.params
+
+    console.log('id :', id)
+
+    const plant = await Plants.findById(id)
+
+    return res.json({ plant })
+  },
+
   async update (req, res) {
     const id = req.params.id
     const { name, controlType, temperature, moisture, timeLightStart, timeLightEnd } = req.body

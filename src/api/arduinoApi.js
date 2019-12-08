@@ -1,13 +1,13 @@
 const tccFetch = require('./tccFetch')
 
 module.exports = {
-  registeDataApi (plantId, controlType, temperature, mv, moisture) {
+  registeDataApi (plantId, controlType, temperature, mv, moisture, error) {
     const urlRegister = '/registers'
     const objectReturn = {}
     const options = {
       method: 'POST',
       body: JSON.stringify({
-        plantId, controlType, temperature, mv, moisture
+        plantId, controlType, temperature, mv, moisture, error
       })
     }
 

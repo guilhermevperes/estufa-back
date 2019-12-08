@@ -17,6 +17,10 @@ const RegisterSchema = mongoose.Schema({
     type: Number,
     required: true
   },
+  error: {
+    type: Number,
+    required: true
+  },
   moisture: {
     type: Number,
     required: true

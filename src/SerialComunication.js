@@ -1,4 +1,5 @@
 const registerDataApi = require('./api/arduinoApi')
+const plantApi = require('./api/plantApi')
 const getData = require('./api/arduinoApi')
 const moment = require('moment')
 
@@ -11,7 +12,7 @@ const arrayToSend = []
 const objToSend = {}
 
 module.exports = {
-  light (command) {
+  write (command) {
     port.write(command)
   },
   ReadSerialPort (io) {
@@ -19,32 +20,44 @@ module.exports = {
       console.log('serial port open')
     })
 
-    parser.on('data', data => {
+    parser.on('data', async data => {
       const serialDataArray = data.split(',')
 
       const dataToSend = {
         name: moment(Date.now()).format('HH:mm:ss').toString(),
         sp: parseFloat(serialDataArray[0]),
         pv: parseFloat(serialDataArray[1]),
-        mv: parseFloat(serialDataArray[2])
+        mv: parseFloat(serialDataArray[2]),
+        moisture: parseFloat(serialDataArray[7])
       }
 
-      // registerDataApi.registeDataApi(serialDataArray[5], serialDataArray[4], parseFloat(serialDataArray[1]), parseFloat(serialDataArray[2]), 0)
-      // .then(result => {
-      arrayToSend.push(dataToSend)
-      // if (arrayToSend.length > 6) {
-      //   arrayToSend.shift()
-      // }
-      objToSend.setPoint = serialDataArray[0]
-      objToSend.temperature = serialDataArray[1]
-      objToSend.dataToPLot = arrayToSend
-      objToSend.mv = serialDataArray[2]
-      objToSend.controlType = serialDataArray[4]
-      objToSend.plantId = serialDataArray[5]
-      io.emit('data', objToSend)
+      registerDataApi.registeDataApi(serialDataArray[5], serialDataArray[4], parseFloat(serialDataArray[1]), parseFloat(serialDataArray[2]), parseFloat(serialDataArray[7]), parseFloat(serialDataArray[6]))
+        .then(async result => {
+          arrayToSend.push(dataToSend)
+          if (arrayToSend.length > 200) {
+            arrayToSend.shift()
+          }
 
-      console.log(serialDataArray)
-      // })
+          const plantData = await plantApi.getPlant(serialDataArray[5])
+          const timeStart = plantData.data.plant.timeLightStart
+          const timeEnd = plantData.data.plant.timeLightEnd
+          const dateNow = Date.now()
+          if (moment(dateNow).subtract(1, 'hour').format('HH:mm') >= timeStart && moment(dateNow).subtract(1, 'hour').format('HH:mm') <= timeEnd) {
+            this.write('b')
+          } else {
+            this.write('c')
+          }
+          objToSend.setPoint = serialDataArray[0]
+          objToSend.temperature = serialDataArray[1]
+          objToSend.dataToPLot = arrayToSend
+          objToSend.mv = serialDataArray[2]
+          objToSend.moisture = serialDataArray[7]
+          objToSend.controlType = serialDataArray[4]
+          objToSend.plantId = serialDataArray[5]
+          io.emit('data', objToSend)
+
+          console.log(serialDataArray)
+        })
     })
   }
 
